@@ -6,8 +6,8 @@ variables:
   GOLANG_VERSION: 1.18.9
 
 stages:
-  - lint
   - test
+  - lint
   - build
   - update_helm_image_tag
 
