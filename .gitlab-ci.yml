@@ -16,12 +16,20 @@ lint:
   image: golangci/golangci-lint
   script:
     - CONFIG=$CONFIG make lint
+  tags:
+    - shared
+    - go-email
+    - docker
 
 # TODO:
 test:
   stage: test
   script:
     - CONFIG=$CONFIG make tests
+  tags:
+    - shared
+    - go-email
+    - docker
 
 build:
   stage: build
