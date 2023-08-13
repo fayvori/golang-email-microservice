@@ -1,0 +1,40 @@
+default:
+  image: golang:$GOLANG_VERSION
+  interruptible: false
+
+variables:
+  GOLANG_VERSION: 1.18.9
+
+stages:
+  - lint
+  - test
+  - build
+  - update_helm_image_tag
+
+lint:
+  stage: lint
+  image: golangci/golangci-lint
+  script:
+    - CONFIG=$CONFIG make lint
+
+# TODO:
+test:
+  stage: test
+  script:
+    - CONFIG=$CONFIG make tests
+
+build:
+  stage: build
+  script:
+    - echo "Build"
+  rules:
+    - if: $CI_COMMIT_BRANCH !~ "main"
+      when: never
+
+# Send notification to the telegram channel for approving
+update_tag:
+  stage: update_helm_image_tag
+  image: mikefarah/yq
+  script:
+    - echo "Update tag"
+  when: manual

@@ -1,0 +1,22 @@
+run:
+  go: '1.19'
+
+linters:
+  enable-all: true
+
+  disable:
+    - depguard
+    - paralleltest
+    - testpackage
+
+    # depricated linters
+    - exhaustivestruct
+    - golint
+    - varcheck
+    - deadcode
+    - structcheck
+    - ifshort
+    - nosnakecase
+    - interfacer
+    - scopelint
+    - maligned

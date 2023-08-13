@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option go_package = "./email-service";
+import "google/api/annotations.proto";
+
+// Mailer
+message EmailRequest {
+    repeated string to = 1;
+    string contentType = 2;
+    string subject = 3;
+    string body = 4;
+}
+
+message EmailResponse {
+}
+
+service MailerService {
+    rpc SendEmails(EmailRequest) returns (EmailResponse) {
+      option (google.api.http) = {
+        post: "/email"
+        body: "*"
+      };
+    }
+}
