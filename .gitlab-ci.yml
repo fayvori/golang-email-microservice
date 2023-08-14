@@ -37,6 +37,7 @@ test:
       pull_policy: [always, if-not-present]
       alias: rabbitmq
   variables:
+    POSTGRES_USER: root
     POSTGRES_PASSWORD: postgres
     BACKEND_POSTGRES_HOST: postgres-db
   tags:
