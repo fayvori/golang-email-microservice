@@ -26,16 +26,17 @@ lint:
 
 test:
   stage: test
-  before_script:
-    - echo $CONFIG
   script:
     - CONFIG=$CONFIG make tests
   services:
     - name: postgres:13-alpine
       pull_policy: [always, if-not-present]
+      alias: postgres-db
 
     - name: rabbitmq:3.12
       pull_policy: [always, if-not-present]
+      alias: rabbitmq
+
   tags:
     - build
     - go-email
