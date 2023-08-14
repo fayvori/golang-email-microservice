@@ -1,0 +1,35 @@
+smtp:
+  Host: "smtp.mail.yahoo.com"
+  Port: 587
+  User: "ignat.belousov2000@yahoo.com"
+  Password: "icxxjjceonicsurn"
+
+logger:
+  Mode: "dev"
+
+metrics:
+  Port: 8242
+
+gateway:
+  Port: 8192
+
+grpc:
+  Port: 50001
+
+rabbit:
+  Host: "rabbitmq"
+  Port: 5672
+  User: "guest"
+  Password: "guest"
+  QueueName: "test"
+  ConsumePool: 2
+
+database:
+  Host: "postgres-db"
+  Port: 5432
+  User: "root"
+  Password: "postgres"
+  DbName: "mails_db"
+  SslMode: "disable"
+
+
