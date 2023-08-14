@@ -23,7 +23,7 @@ func (m *Mailer) SendEmails(email *models.Email) error {
 
 	gm.SetBody(email.ContentType, email.Body)
 
-	fmt.Println(email.From)
+	fmt.Println(email)
 
 	return m.dialer.DialAndSend(gm)
 }

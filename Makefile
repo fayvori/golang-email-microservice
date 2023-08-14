@@ -34,4 +34,7 @@ proto:
 # ==============================================================================
 # Docker
 compose_up:
-	@docker-compose up -f ./deployments/docker-compose.yml
+	docker-compose -f ./deployments/docker-compose.yml up -d
+
+compose_down:
+	docker-compose -f ./deployments/docker-compose.yml down

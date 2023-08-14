@@ -3,7 +3,6 @@ package delivery
 import (
 	"context"
 	"errors"
-	"fmt"
 	"go-email/config"
 	repo "go-email/internal/database"
 	"go-email/internal/mailer"
@@ -71,7 +70,6 @@ func (s *Server) SendEmails(ctx context.Context, r *pb.EmailRequest) (*pb.EmailR
 	}
 
 	if err := s.repo.CreateEmail(email); err != nil {
-		fmt.Println(err)
 		emailsSavedFailure.Inc()
 		return nil, err
 	}

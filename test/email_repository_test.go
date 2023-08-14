@@ -41,6 +41,5 @@ func TestEmailRepository_TestPostgresCreateEmail(t *testing.T) {
 		fmt.Println(err.Error())
 	}
 
-	require.NotNil(t, err)
 	require.NoError(t, err)
 }

@@ -4,10 +4,11 @@ default:
 
 variables:
   GOLANG_VERSION: 1.18.9
+  CI_REGISTRY_IMAGE: fayvori/mail-service
 
 stages:
-  - test
   - lint
+  - test
   - build
   - update_helm_image_tag
 
@@ -15,29 +16,37 @@ lint:
   stage: lint
   image: golangci/golangci-lint
   script:
-    - CONFIG=$CONFIG make lint
+    - make lint
   tags:
-    - shared
+    - build
     - go-email
     - docker
 
-# TODO:
 test:
   stage: test
   script:
     - CONFIG=$CONFIG make tests
+  services:
+    - name: postgres:13-alpine
+      pull_policy: if-not-present
+
+    - name: rabbitmq:3.12
+      pull_policy: if-not-present
   tags:
-    - shared
+    - build
     - go-email
     - docker
 
 build:
   stage: build
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - echo "Build"
-  rules:
-    - if: $CI_COMMIT_BRANCH !~ "main"
-      when: never
+    - docker build --pull -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  tags:
+    - build
+    - docker
 
 # Send notification to the telegram channel for approving
 update_tag:
@@ -45,4 +54,6 @@ update_tag:
   image: mikefarah/yq
   script:
     - echo "Update tag"
-  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH !~ "main"
+      when: never

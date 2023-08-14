@@ -23,7 +23,7 @@ func TestEmailRabbitMQ_RabbitMQConnection(t *testing.T) {
 	require.Nil(t, err)
 }
 
-// TODO:?
+// TODO:
 func TestEmailRabbitMQ_RabbitMQReadMessagesFromQueue(t *testing.T) {
 	conn, _ := rb.NewRabbitMQ(cfg)
 	defer conn.Close()
