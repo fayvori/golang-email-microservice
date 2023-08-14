@@ -7,9 +7,9 @@ variables:
   CI_REGISTRY_IMAGE: fayvori/mail-service
 
 stages:
+  - lint
   - test
   - build
-  - lint
   - update_helm_image_tag
 
 lint:
