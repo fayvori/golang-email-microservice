@@ -53,7 +53,7 @@ build:
     - build
     - docker
 
-# Send notification to the telegram channel for approving
+# Send notification to the telegram channel for approving!
 update_tag:
   stage: update_helm_image_tag
   image: mikefarah/yq
