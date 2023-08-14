@@ -36,7 +36,9 @@ test:
     - name: rabbitmq:3.12
       pull_policy: [always, if-not-present]
       alias: rabbitmq
-
+  variables:
+    POSTGRES_PASSWORD: postgres
+    BACKEND_POSTGRES_HOST: postgres-db
   tags:
     - build
     - go-email
