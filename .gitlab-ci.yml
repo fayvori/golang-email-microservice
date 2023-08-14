@@ -40,6 +40,7 @@ test:
     POSTGRES_USER: root
     POSTGRES_PASSWORD: postgres
     BACKEND_POSTGRES_HOST: postgres-db
+    POSTGRES_DB: mails_db
   tags:
     - build
     - go-email
