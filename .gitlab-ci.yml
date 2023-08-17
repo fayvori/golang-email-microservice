@@ -71,8 +71,7 @@ update_tag:
     - git switch main
     - git reset --hard origin/main
   script:
-    - helm-tag-updater -t $CI_COMMIT_MESSAGE -p \
-        -f $(pwd)/email-service/values.yaml
+    - helm-tag-updater -t $CI_COMMIT_MESSAGE -p -f $(pwd)/email-service/values.yaml
     - git add .
     - git commit -m "CI Deploy $CI_COMMIT_MESSAGE"
     - git push -o ci.skip origin HEAD:main
