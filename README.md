@@ -31,10 +31,10 @@ First you need SMTP credentials for [gomail](https://github.com/go-gomail/gomail
  
 ```yaml
 smtp:
-  Host: "smtp.mail.yahoo.com"
-  Port: 587
-  User: "ignat.belousov2000@yahoo.com"
-  Password: "icxxjjceonicsurn"
+  Host: ""
+  Port: 0
+  User: ""
+  Password: ""
 
 logger:
   Mode: "prod"
@@ -91,7 +91,12 @@ http://localhost:50001/
 ### Metrics and Swagger
 http://localhost:8242/metrics
 
-http://localhost:8242/swagger
+### Swagger
+For running swagger execute the following command
+
+```bash
+make swagger
+```
 
 # Credits
 
