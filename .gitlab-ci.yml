@@ -62,7 +62,7 @@ update_tag:
   stage: update_helm_image_tag
   image: fayvori/helm_image_updater:1.0
   before_script:
-    - git remote set-url origin https://fayvori:JpJnDHWkHZYFx86xw1F9@gitlab.com:fayvori/gitlab-gomail-ops.git
+    - git remote set-url origin https://fayvori:glpat-9Gg3ms2yvLxudDV5qW-k@gitlab.com/fayvori/gitlab-gomail-ops.git
       # Configure git user
     - git config --global user.name "Ignat Belousov"
     - git config --global user.email "ignat.belousov2000@yahoo.com"
