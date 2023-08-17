@@ -58,12 +58,11 @@ build:
     - build
     - docker
 
-# Send notification to the telegram channel for approving!
 update_tag:
   stage: update_helm_image_tag
   image: fayvori/helm_image_updater:1.0
   before_script:
-    - git remote set-url origin "https://$REPO_TOKEN_NAME:$REPO_ACCESS_TOKEN@gitlab.com:fayvori/gitlab-gomail-ops.git"
+    - git remote set-url origin https://$REPO_TOKEN_NAME:$REPO_ACCESS_TOKEN@gitlab.com:fayvori/gitlab-gomail-ops.git
       # Configure git user
     - git config --global user.name "Ignat Belousov"
     - git config --global user.email "ignat.belousov2000@yahoo.com"
