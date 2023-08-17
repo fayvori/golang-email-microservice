@@ -62,14 +62,7 @@ update_tag:
   stage: update_helm_image_tag
   image: fayvori/helm_image_updater:1.0
   before_script:
-    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
-    - eval $(ssh-agent -s)
-    - chmod 400 "$SSH_PRIVATE_KEY"
-    - ssh-add "$SSH_PRIVATE_KEY"
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-
-    - git remote set-url origin https://gitlab.com/fayvori/gitlab-gomail-ops.git
+    - git remote set-url origin https://gitlab+deploy-token-2362111:JpJnDHWkHZYFx86xw1F9@gitlab.com:fayvori/gitlab-gomail-ops.git
       # Configure git user
     - git config --global user.name "Ignat Belousov"
     - git config --global user.email "ignat.belousov2000@yahoo.com"
