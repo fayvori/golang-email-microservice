@@ -7,10 +7,11 @@ variables:
   CI_REGISTRY_IMAGE: fayvori/mail-service
 
 stages:
-  - update_helm_image_tag
   - lint
   - test
-  - build
+  - build_dev
+  - build_prod
+  - update_helm_image_tag
 
 lint:
   stage: lint
@@ -46,7 +47,20 @@ test:
     - go-email
     - docker
 
-build:
+
+build_dev:
+  stage: build
+  image: docker:latest
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build -f ./build/package/Dockerfile --pull -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  tags:
+    - build
+    - docker
+
+build_prod:
   stage: build
   image: docker:latest
   before_script:
@@ -54,6 +68,8 @@ build:
   script:
     - docker build -f ./build/package/Dockerfile --pull -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_MESSAGE
+  only:
+    - main
   tags:
     - build
     - docker
@@ -62,7 +78,7 @@ update_tag:
   stage: update_helm_image_tag
   image: fayvori/helm_image_updater:1.0
   before_script:
-    - git remote set-url origin https://fayvori:glpat-9Gg3ms2yvLxudDV5qW-k@gitlab.com/fayvori/gitlab-gomail-ops.git
+    - git remote set-url origin https://$REPO_ACCESS_USER:$REPO_ACCESS_TOKEN@gitlab.com/fayvori/gitlab-gomail-ops.git
       # Configure git user
     - git config --global user.name "Ignat Belousov"
     - git config --global user.email "ignat.belousov2000@yahoo.com"
