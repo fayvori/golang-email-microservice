@@ -80,8 +80,8 @@ update_tag:
   before_script:
     - git remote set-url origin https://$REPO_ACCESS_USER:$REPO_ACCESS_TOKEN@gitlab.com/fayvori/gitlab-gomail-ops.git
       # Configure git user
-    - git config --global user.name "Ignat Belousov"
-    - git config --global user.email "ignat.belousov2000@yahoo.com"
+    - git config --global user.name $GIT_GLOBAL_USER
+    - git config --global user.email $GIT_GLOBAL_EMAIL
     # Reset to remote main branch
     - git fetch
     - git switch main
