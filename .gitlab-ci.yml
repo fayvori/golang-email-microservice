@@ -63,8 +63,19 @@ update_tag:
   stage: update_helm_image_tag
   image: fayvori/helm_image_updater:1.0
   before_script:
-    - echo "https://$REPO_TOKEN_NAME:$REPO_ACCESS_TOKEN@gitlab.com/myproject/myapp.git"
+    - git remote set-url origin "https://$REPO_TOKEN_NAME:$REPO_ACCESS_TOKEN@gitlab.com:fayvori/gitlab-gomail-test.git"
+      # Configure git user
+    - git config --global user.name "Ignat Belousov"
+    - git config --global user.email "ignat.belousov2000@yahoo.com"
+    # Reset to remote main branch
+    - git fetch
+    - git switch main
+    - git reset --hard origin/main
   script:
-    - echo "Update tag"
+    - helm-tag-updater -t $CI_COMMIT_MESSAGE -p \
+        -f $(pwd)/email-service/values.yaml
+    - git add .
+    - git commit -m "CI Deploy $CI_COMMIT_MESSAGE"
+    - git push -o ci.skip origin HEAD:main
   only:
     - main
