@@ -1,7 +1,6 @@
 package test
 
 import (
-	"fmt"
 	repo "go-email/internal/database"
 	"go-email/internal/models"
 	db "go-email/pkg/database"
@@ -15,20 +14,20 @@ import (
 var dbConn *gorm.DB
 
 func init() {
-	db, err := db.NewDatabase(cfg)
+	databaseConn, err := db.NewDatabase(cfg)
 
 	if err != nil {
 		log.Fatal("cannot connect to the database for tests")
 	}
 
-	dbConn = db
+	dbConn = databaseConn
 }
 
 func TestEmailRepository_TestPostgresCreateEmail(t *testing.T) {
 	repo := repo.NewRepository(dbConn)
 
 	email := &models.Email{
-		From:        cfg.Smtp.User,
+		From:        cfg.SMTP.User,
 		To:          []string{"alexemailtestingtwo@yahoo.com"},
 		ContentType: "text/plain",
 		Subject:     "Testing",
@@ -36,10 +35,6 @@ func TestEmailRepository_TestPostgresCreateEmail(t *testing.T) {
 	}
 
 	err := repo.CreateEmail(email)
-
-	if err != nil {
-		fmt.Println(err.Error())
-	}
 
 	require.NoError(t, err)
 }

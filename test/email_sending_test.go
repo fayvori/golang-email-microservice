@@ -14,7 +14,7 @@ func TestEmailSending_EmailSendingNoError(t *testing.T) {
 	mailer := mailer.NewMailer(d)
 
 	email := &models.Email{
-		From:        cfg.Smtp.User,
+		From:        cfg.SMTP.User,
 		To:          []string{"alexemailtestingtwo@yahoo.com"},
 		ContentType: "text/plain",
 		Subject:     "Testing",

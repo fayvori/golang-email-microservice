@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// email type for grpc and rabbitmq
+// email model for grpc and rabbitmq
 type Email struct {
 	From        string   `json:"from"`
 	To          []string `json:"to"`

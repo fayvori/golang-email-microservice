@@ -10,15 +10,19 @@ import (
 	pb "go-email/pkg/proto/email-service"
 
 	"context"
-	"github.com/stretchr/testify/assert"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/test/bufconn"
 	"net"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/test/bufconn"
 )
 
-var conf, _ = config.LoadConfigFromEnv()
+var conf = config.LoadConfigFromEnv()
 
+// grpc generates interface as implementation golangci-lint marks it as `ireturn` error
+//nolint
 func server(ctx context.Context) (pb.MailerServiceClient, func()) {
 	buffer := 1024 * 1024
 	listener := bufconn.Listen(buffer)
@@ -29,24 +33,26 @@ func server(ctx context.Context) (pb.MailerServiceClient, func()) {
 	dbConn, _ := db.NewDatabase(conf)
 	repo := repository.NewRepository(dbConn)
 
-	s := grpc.NewServer()
-	pb.RegisterMailerServiceServer(s, delivery.NewServer(conf,
+	server := grpc.NewServer()
+
+	pb.RegisterMailerServiceServer(server, delivery.NewServer(conf,
 		mailer,
 		repo,
 	))
+
 	go func() {
-		if err := s.Serve(listener); err != nil {
+		if err := server.Serve(listener); err != nil {
 			panic(err)
 		}
 	}()
 
 	conn, _ := grpc.DialContext(ctx, "", grpc.WithContextDialer(func(context.Context, string) (net.Conn, error) {
 		return listener.Dial()
-	}), grpc.WithInsecure(), grpc.WithBlock())
+	}), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 
 	client := pb.NewMailerServiceClient(conn)
 
-	return client, s.Stop
+	return client, server.Stop
 }
 
 func TestEmailGrpc_SendEmails(t *testing.T) {

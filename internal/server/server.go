@@ -1,96 +1,47 @@
 package server
 
 import (
-	"context"
-	"fmt"
+	log "github.com/sirupsen/logrus"
 	config "go-email/config"
-	delivery "go-email/internal/delivery/grpc"
-	"go-email/internal/mailer"
 	logger "go-email/pkg/logger"
-	mail "go-email/pkg/mailer"
-	pb "go-email/pkg/proto/email-service"
-	rb "go-email/pkg/rabbitmq"
-	"net"
-	"net/http"
 
-	echoSwagger "github.com/swaggo/echo-swagger"
+	mailer "go-email/internal/mailer"
+	mail "go-email/pkg/mailer"
+
+	consumer "go-email/internal/delivery/rabbitmq"
+	rb "go-email/pkg/rabbitmq"
 
 	repository "go-email/internal/database"
-	consumer "go-email/internal/delivery/rabbitmq"
 	db "go-email/pkg/database"
-
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	log "github.com/sirupsen/logrus"
-
-	"github.com/labstack/echo/v4"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
-var cfg, _ = config.LoadConfigFromEnv()
-
-func runGrpcRest() {
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
-	mux := runtime.NewServeMux()
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	err := pb.RegisterMailerServiceHandlerFromEndpoint(ctx, mux, fmt.Sprintf("localhost:%d", cfg.Grpc.Port), opts)
-
-	if err != nil {
-		panic(err)
-	}
-
-	log.Printf("server listening at %d", cfg.Gateway.Port)
-
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.Gateway.Port), mux); err != nil {
-		panic(err)
-	}
-}
-
-func runMetricsAndSwagger() {
-	e := echo.New()
-	e.GET("/", echo.WrapHandler(promhttp.Handler()))
-
-	// TODO:
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
-	log.Fatal(e.Start(fmt.Sprintf(":%d", cfg.Metrics.Port)))
-}
-
 func Run() {
-	conf, err := config.LoadConfigFromEnv()
-
-	if err != nil {
-		log.Println("Error loading config")
-	}
+	conf := config.LoadConfigFromEnv()
 
 	// Init logger
 	logger.InitLogger()
 
-	// Settings for SMTP server
+	// Setup for SMTP server
 	d := mail.NewMailDialer(conf)
 	mailer := mailer.NewMailer(d)
 
-	// Init metrics and Swagger docs
-	go runMetricsAndSwagger()
-
-	// Init grpc-gateway rest
-	go runGrpcRest()
-
+	// Init RabbitMQ connection
 	rabbitConnection, err := rb.NewRabbitMQ(conf)
 	cons := consumer.NewConsumer(rabbitConnection, mailer, conf)
 
 	if err != nil {
-		log.Fatalf("Cannot connect to the rabbitmq %s\n", err.Error())
+		log.WithFields(log.Fields{
+			"message": "Unable to connect to the RabbitMQ server",
+		}).Infof("Cannot connect to the RabbitMQ %s", err.Error())
 	}
 
 	go func() {
 		err := cons.Consume(conf.Rabbit.ConsumePool)
 
 		if err != nil {
-			log.Fatal(err.Error())
+			log.WithFields(log.Fields{
+				"message": "Unable to consume messages from RabbitMQ",
+			}).Infof("Cannot receive messages from RabbitMQ %s", err.Error())
 		}
 	}()
 
@@ -99,23 +50,17 @@ func Run() {
 	repo := repository.NewRepository(dbConn)
 
 	if err != nil {
-		log.Fatal(err.Error())
+		log.WithFields(log.Fields{
+			"message": "Unable to connect to the Database",
+		}).Infof("Cannot connect to the Database %s", err.Error())
 	}
 
-	// Implementing grpc server
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", conf.Grpc.Port))
-	if err != nil {
-		log.Errorf("failed to start server %v", err)
-	}
+	// Init grpc-gateway rest
+	go runGrpcRest()
 
-	log.WithFields(log.Fields{
-		"port": lis.Addr(),
-	}).Debug("Server started successfully")
+	// Init metrics and Swagger docs
+	go runMetrics()
 
-	s := grpc.NewServer()
-	pb.RegisterMailerServiceServer(s, delivery.NewServer(conf, mailer, repo))
-
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+	// Init grpc server
+	runGrpc(mailer, repo)
 }

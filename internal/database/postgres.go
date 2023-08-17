@@ -2,7 +2,6 @@ package database
 
 import (
 	"go-email/internal/models"
-
 	"gorm.io/gorm"
 )
 

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"go-email/config"
 	"go-email/internal/models"
-	"log"
 
+	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -21,18 +21,20 @@ func NewDatabase(cfg *config.Config) (*gorm.DB, error) {
 		cfg.Database.SslMode,
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	dbConn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		return nil, err
 	}
 
 	// migrate model
-	err = db.AutoMigrate(&models.EmailModel{})
+	err = dbConn.AutoMigrate(&models.EmailModel{})
 
 	if err != nil {
-		log.Fatalf("Cannot migrate models to the database: %s", err.Error())
+		log.WithFields(log.Fields{
+			"message": "gorm AuthMigrate function cannot migrate models to the database",
+		}).Fatalf("Cannot migrate models to the database: %s", err.Error())
 	}
 
-	return db, nil
+	return dbConn, nil
 }

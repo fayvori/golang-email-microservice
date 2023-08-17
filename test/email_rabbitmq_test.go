@@ -9,22 +9,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var cfg, _ = config.LoadConfigFromEnv()
-
-func rabbitPublishEmailToQueueForTests() {
-
-}
+var cfg = config.LoadConfigFromEnv()
 
 func TestEmailRabbitMQ_RabbitMQConnection(t *testing.T) {
 	conn, err := rb.NewRabbitMQ(cfg)
+	//nolint
 	defer conn.Close()
 
 	require.NoError(t, err)
 	require.Nil(t, err)
-}
-
-// TODO:
-func TestEmailRabbitMQ_RabbitMQReadMessagesFromQueue(t *testing.T) {
-	conn, _ := rb.NewRabbitMQ(cfg)
-	defer conn.Close()
 }

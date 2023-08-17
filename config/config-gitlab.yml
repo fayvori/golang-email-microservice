@@ -5,7 +5,7 @@ smtp:
   Password: "icxxjjceonicsurn"
 
 logger:
-  Mode: "dev"
+  Mode: "prod"
 
 metrics:
   Port: 8242

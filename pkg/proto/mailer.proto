@@ -2,8 +2,29 @@ syntax = "proto3";
 
 option go_package = "./email-service";
 import "google/api/annotations.proto";
+import "openapiv2/annotations.proto";
 
-// Mailer
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Mail service";
+    version: "1.0";
+    contact: {
+      name: "fayvori";
+      email: "ignat.belousov2000@yahoo.com";
+    };
+  };
+
+  external_docs: {
+    description: "Author GitHub";
+    url: "https://github.com/fayvori";
+  };
+
+  schemes: HTTP;
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+};
+
 message EmailRequest {
     repeated string to = 1;
     string contentType = 2;
@@ -19,6 +40,15 @@ service MailerService {
       option (google.api.http) = {
         post: "/email"
         body: "*"
+      };
+
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+        summary: "Send email message for one or many recievers";
+        operation_id: "sendEmails";
+        tags: "mailer";
+        responses: {
+          key: "200"
+        }
       };
     }
 }

@@ -1,9 +1,7 @@
 package mailer
 
 import (
-	"fmt"
 	"go-email/internal/models"
-
 	"gopkg.in/gomail.v2"
 )
 
@@ -16,14 +14,12 @@ func NewMailer(dialer *gomail.Dialer) *Mailer {
 }
 
 func (m *Mailer) SendEmails(email *models.Email) error {
-	gm := gomail.NewMessage()
-	gm.SetHeader("From", email.From)
-	gm.SetHeader("To", email.To...)
-	gm.SetHeader("Subject", email.Subject)
+	emailDialer := gomail.NewMessage()
+	emailDialer.SetHeader("From", email.From)
+	emailDialer.SetHeader("To", email.To...)
+	emailDialer.SetHeader("Subject", email.Subject)
 
-	gm.SetBody(email.ContentType, email.Body)
+	emailDialer.SetBody(email.ContentType, email.Body)
 
-	fmt.Println(email)
-
-	return m.dialer.DialAndSend(gm)
+	return m.dialer.DialAndSend(emailDialer)
 }

@@ -48,10 +48,10 @@ func NewServer(cfg *config.Config, mailer *mailer.Mailer, repo *repo.Resository)
 }
 
 // context needed for implementing grpc interface, but linter sees it as unused
-// nolint
+//nolint
 func (s *Server) SendEmails(ctx context.Context, r *pb.EmailRequest) (*pb.EmailResponse, error) {
 	email := &models.Email{
-		From:        s.cfg.Smtp.User,
+		From:        s.cfg.SMTP.User,
 		To:          r.GetTo(),
 		Body:        string(r.GetBody()),
 		Subject:     r.GetSubject(),

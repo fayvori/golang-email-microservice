@@ -1,13 +1,21 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "mailer.proto",
-    "version": "version not set"
+    "title": "Mail service",
+    "version": "1.0",
+    "contact": {
+      "name": "fayvori",
+      "email": "ignat.belousov2000@yahoo.com"
+    }
   },
   "tags": [
     {
       "name": "MailerService"
     }
+  ],
+  "schemes": [
+    "http",
+    "https"
   ],
   "consumes": [
     "application/json"
@@ -18,7 +26,8 @@
   "paths": {
     "/email": {
       "post": {
-        "operationId": "MailerService_SendEmails",
+        "summary": "Send email message for one or many recievers",
+        "operationId": "sendEmails",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -44,7 +53,7 @@
           }
         ],
         "tags": [
-          "MailerService"
+          "mailer"
         ]
       }
     }
@@ -68,8 +77,7 @@
         "body": {
           "type": "string"
         }
-      },
-      "title": "Mailer"
+      }
     },
     "EmailResponse": {
       "type": "object"
@@ -102,5 +110,9 @@
         }
       }
     }
+  },
+  "externalDocs": {
+    "description": "Author GitHub",
+    "url": "https://github.com/fayvori"
   }
 }

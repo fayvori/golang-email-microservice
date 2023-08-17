@@ -5,7 +5,6 @@ import (
 	"go-email/config"
 	"go-email/internal/mailer"
 	"go-email/internal/models"
-	"log"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -13,7 +12,7 @@ import (
 )
 
 // Load config from env variable
-var cfg, _ = config.LoadConfigFromEnv()
+var cfg = config.LoadConfigFromEnv()
 
 // Custom metrics for `Prometheus`
 var (
@@ -40,13 +39,13 @@ func NewConsumer(conn *amqp.Connection, mailer *mailer.Mailer, cfg *config.Confi
 
 // Function for creating new channel in `RabbitMQ`
 func (c *Consumer) createChannel() (*amqp.Channel, error) {
-	ch, err := c.conn.Channel()
+	channel, err := c.conn.Channel()
 
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = ch.QueueDeclare(
+	_, err = channel.QueueDeclare(
 		c.cfg.Rabbit.QueueName, // name
 		false,                  // durable
 		false,                  // delete when unused
@@ -56,25 +55,24 @@ func (c *Consumer) createChannel() (*amqp.Channel, error) {
 	)
 
 	if err != nil {
-		log.Fatal(err)
 		return nil, err
 	}
 
-	return ch, nil
+	return channel, nil
 }
 
 func (c *Consumer) Consume(poolSize int) error {
-	ch, err := c.createChannel()
+	channel, err := c.createChannel()
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	defer ch.Close()
+	defer channel.Close()
 
 	var forever chan struct{}
 
-	messages, err := ch.Consume(
+	messages, err := channel.Consume(
 		c.cfg.Rabbit.QueueName, // queue
 		"",                     // consumer
 		true,                   // auto-ack
@@ -84,20 +82,25 @@ func (c *Consumer) Consume(poolSize int) error {
 		nil,                    // args
 	)
 
+	if err != nil {
+		return err
+	}
+
 	for i := 0; i < poolSize; i++ {
 		for msg := range messages {
 			email := &models.Email{}
 			err := json.Unmarshal(msg.Body, &email)
 
 			// Set root email from cfg
-			email.From = cfg.Smtp.User
+			email.From = cfg.SMTP.User
 
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 
 			if err := c.mailer.SendEmails(email); err != nil {
 				messagesConsumedFailure.Inc()
+
 				return err
 			}
 

@@ -10,6 +10,15 @@ linters:
     - paralleltest
     - testpackage
 
+    - godot
+    - gochecknoglobals
+    - gofumpt
+    - exhaustruct
+    - gochecknoinits
+    - wrapcheck
+    - gci
+    - goimports
+
     # depricated linters
     - exhaustivestruct
     - golint

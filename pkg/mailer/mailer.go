@@ -2,14 +2,16 @@ package pkg
 
 import (
 	"crypto/tls"
-	config "go-email/config"
+	"go-email/config"
 
 	gomail "gopkg.in/gomail.v2"
 )
 
 // email dialer
 func NewMailDialer(cfg *config.Config) *gomail.Dialer {
-	d := gomail.NewDialer(cfg.Smtp.Host, cfg.Smtp.Port, cfg.Smtp.User, cfg.Smtp.Password)
+	d := gomail.NewDialer(cfg.SMTP.Host, cfg.SMTP.Port, cfg.SMTP.User, cfg.SMTP.Password)
+
+	//nolint
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
 	return d

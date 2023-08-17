@@ -8,5 +8,6 @@ import (
 
 func InitLogger() {
 	logrus.SetOutput(os.Stdout)
+
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 }

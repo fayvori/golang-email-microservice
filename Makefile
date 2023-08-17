@@ -14,14 +14,14 @@ clean:
 	go mod tidy && go fmt ./...
 
 lint:
-	golangci-lint run \
+	@golangci-lint run \
 		./config \
 		./internal/... \
 		./pkg/... \
 		./test
 
-proto_folder = ./pkg/proto/
-openapiv2_folder = ./docs/swagger/
+proto_folder = ./pkg/proto
+openapiv2_folder = ./docs/swagger
 
 proto:
 	protoc -I $(proto_folder) \
@@ -31,8 +31,19 @@ proto:
 		--openapiv2_out $(openapiv2_folder) \
   	$(proto_folder)/mailer.proto
 
+
+# ==============================================================================
+# OpenAPI
+
+swagger:
+	docker run -p 80:8080 \
+    -e SWAGGER_JSON=/docs/swagger/mailer.swagger.json \
+    -v $(shell pwd)/docs/:/docs \
+		swaggerapi/swagger-ui:v5.3.2
+
 # ==============================================================================
 # Docker
+
 compose_up:
 	docker-compose -f ./deployments/docker-compose.yml up -d
 
