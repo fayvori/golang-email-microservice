@@ -24,7 +24,7 @@
     "application/json"
   ],
   "paths": {
-    "/email": {
+    "/gateway/email": {
       "post": {
         "summary": "Send email message for one or many recievers",
         "operationId": "sendEmails",

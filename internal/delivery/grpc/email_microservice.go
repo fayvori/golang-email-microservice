@@ -8,10 +8,12 @@ import (
 	"go-email/internal/mailer"
 	"go-email/internal/models"
 	"go-email/internal/validator"
+	"go-email/pkg/constants"
 	pb "go-email/pkg/proto/email-service"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
+	"go.opentelemetry.io/otel"
 )
 
 var (
@@ -47,8 +49,8 @@ func NewServer(cfg *config.Config, mailer *mailer.Mailer, repo *repo.Resository)
 	return &Server{cfg: cfg, mailer: mailer, repo: repo}
 }
 
-// context needed for implementing grpc interface, but linter sees it as unused
-//nolint
+// `context` needed for implementing grpc interface, but linter sees it as unused
+// nolint
 func (s *Server) SendEmails(ctx context.Context, r *pb.EmailRequest) (*pb.EmailResponse, error) {
 	email := &models.Email{
 		From:        s.cfg.SMTP.User,
@@ -58,21 +60,34 @@ func (s *Server) SendEmails(ctx context.Context, r *pb.EmailRequest) (*pb.EmailR
 		ContentType: r.GetContentType(),
 	}
 
+	tp := otel.Tracer(constants.TRACER_NAME)
+
+	rootContext, span := tp.Start(context.Background(), "emails-grpc-root")
+	defer span.End()
+
 	for _, receiver := range r.GetTo() {
 		if !validator.ValidateEmail(receiver) {
 			return nil, errors.New("Unable to validate email")
 		}
 	}
 
+	_, span = tp.Start(rootContext, "emails-grpc-send-emails")
+
 	if err := s.mailer.SendEmails(email); err != nil {
 		emailsFailure.Inc()
 		return nil, err
 	}
 
+	span.End()
+
+	_, span = tp.Start(rootContext, "emails-grpc-save-emails")
+
 	if err := s.repo.CreateEmail(email); err != nil {
 		emailsSavedFailure.Inc()
 		return nil, err
 	}
+
+	span.End()
 
 	emailsSuccess.Inc()
 	emailsSavedSuccessfully.Inc()

@@ -1,8 +1,8 @@
 smtp:
-  Host: ""
-  Port: 0
-  User: ""
-  Password: ""
+  Host: "smtp.mail.yahoo.com"
+  Port: 587
+  User: "ignat.belousov2000@yahoo.com"
+  Password: "icxxjjceonicsurn"
 
 logger:
   Mode: "prod"
@@ -16,12 +16,15 @@ gateway:
 grpc:
   Port: 50001
 
+jaeger:
+  Host: localhost:14268
+
 rabbit:
   Host: "localhost"
   Port: 5672
   User: "guest"
   Password: "guest"
-  QueueName: "test"
+  QueueName: "emails"
   ConsumePool: 2
 
 database:

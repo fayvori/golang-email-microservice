@@ -2,6 +2,7 @@ package mailer
 
 import (
 	"go-email/internal/models"
+
 	"gopkg.in/gomail.v2"
 )
 

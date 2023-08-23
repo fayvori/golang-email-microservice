@@ -16,12 +16,15 @@ gateway:
 grpc:
   Port: 50001
 
+jaeger:
+  Host: jaeger
+
 rabbit:
   Host: "rabbitmq"
   Port: 5672
   User: "guest"
   Password: "guest"
-  QueueName: "test"
+  QueueName: "emails"
   ConsumePool: 2
 
 database:

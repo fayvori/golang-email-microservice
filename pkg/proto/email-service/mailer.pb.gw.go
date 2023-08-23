@@ -79,7 +79,7 @@ func RegisterMailerServiceHandlerServer(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.MailerService/SendEmails", runtime.WithHTTPPathPattern("/email"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/.MailerService/SendEmails", runtime.WithHTTPPathPattern("/gateway/email"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -143,7 +143,7 @@ func RegisterMailerServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.MailerService/SendEmails", runtime.WithHTTPPathPattern("/email"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/.MailerService/SendEmails", runtime.WithHTTPPathPattern("/gateway/email"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -163,7 +163,7 @@ func RegisterMailerServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 }
 
 var (
-	pattern_MailerService_SendEmails_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"email"}, ""))
+	pattern_MailerService_SendEmails_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"gateway", "email"}, ""))
 )
 
 var (

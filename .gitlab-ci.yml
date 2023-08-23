@@ -4,6 +4,7 @@ default:
 
 variables:
   GOLANG_VERSION: 1.18.9
+  HELM_UPDATER_TAG: 1.0
   CI_REGISTRY_IMAGE: fayvori/mail-service
 
 stages:
@@ -56,6 +57,8 @@ build_dev:
   script:
     - docker build -f ./build/package/Dockerfile --pull -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  except:
+    - main
   tags:
     - build
     - docker
@@ -76,7 +79,7 @@ build_prod:
 
 update_tag:
   stage: update_helm_image_tag
-  image: fayvori/helm_image_updater:1.0
+  image: fayvori/helm_image_updater:$HELM_UPDATER_TAG
   before_script:
     - git remote set-url origin https://$REPO_ACCESS_USER:$REPO_ACCESS_TOKEN@gitlab.com/fayvori/gitlab-gomail-ops.git
       # Configure git user

@@ -38,7 +38,7 @@ message EmailResponse {
 service MailerService {
     rpc SendEmails(EmailRequest) returns (EmailResponse) {
       option (google.api.http) = {
-        post: "/email"
+        post: "/gateway/email"
         body: "*"
       };
 

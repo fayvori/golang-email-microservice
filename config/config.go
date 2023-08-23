@@ -16,6 +16,7 @@ type Config struct {
 	Rabbit   Rabbit
 	Gateway  Gateway
 	Metrics  Metrics
+	Jaeger   Jaeger
 }
 
 type SMTP struct {
@@ -53,6 +54,10 @@ type Rabbit struct {
 	Password    string
 	QueueName   string
 	ConsumePool int
+}
+
+type Jaeger struct {
+	Host string
 }
 
 var config *Config

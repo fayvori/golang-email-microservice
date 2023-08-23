@@ -22,7 +22,7 @@ import (
 var conf = config.LoadConfigFromEnv()
 
 // grpc generates interface as implementation golangci-lint marks it as `ireturn` error
-//nolint
+// nolint
 func server(ctx context.Context) (pb.MailerServiceClient, func()) {
 	buffer := 1024 * 1024
 	listener := bufconn.Listen(buffer)

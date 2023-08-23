@@ -16,8 +16,10 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/labstack/echo/v4"
 	repository "go-email/internal/database"
+
+	"github.com/labstack/echo/v4"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -69,16 +71,28 @@ func runGrpcRest() {
 	}
 }
 
-func runMetrics() {
+func runMetricsAndHealth() {
 	echoServer := echo.New()
+
+	// Include otel middleware
+	echoServer.Use(otelecho.Middleware("email-service"))
 
 	// Hide initial echo banner
 	echoServer.HideBanner = true
 	echoServer.HidePort = true
 
 	log.WithFields(log.Fields{
-		"message": "Metrics server started successfully",
-	}).Printf("Metrics server listening at port %d", cfg.Metrics.Port)
+		"message": "Metrics and health server started successfully",
+	}).Printf("Metrics and heatlh server listening at port %d", cfg.Metrics.Port)
+
+	// Health handler
+	echoServer.GET("/", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, struct {
+			Status string `json:"status"`
+		}{
+			Status: "ok",
+		})
+	})
 
 	echoServer.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
 
