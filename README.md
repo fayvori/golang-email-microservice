@@ -47,6 +47,9 @@ metrics:
 gateway:
   Port: 8192
 
+jaeger:
+  Host: localhost:14268
+
 grpc:
   Port: 50001
 
