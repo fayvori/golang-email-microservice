@@ -1,8 +1,8 @@
 smtp:
-  Host: "smtp.mail.yahoo.com"
-  Port: 587
-  User: "ignat.belousov2000@yahoo.com"
-  Password: "icxxjjceonicsurn"
+  Host: ""
+  Port: 0
+  User: ""
+  Password: ""
 
 logger:
   Mode: "prod"
