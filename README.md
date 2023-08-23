@@ -23,6 +23,8 @@ This is an email service for sending emails through grpc / http ([grpc-gateway](
 * [Prometheus](https://prometheus.io/) - Prometheus
 * [Gomail](https://github.com/go-gomail/gomail/tree/v2) - Simple and efficient package to send emails
 * [Prometheus-go-client](https://github.com/prometheus/client_golang) - Prometheus instrumentation library for Go applications
+* [otel](https://github.com/open-telemetry/opentelemetry-go) - otel client for Golang
+* [Jaeger](https://www.jaegertracing.io) - otel Jaeger exporter
 
 # ✅ Setup
 First you need SMTP credentials for [gomail](https://github.com/go-gomail/gomail), you can obtain it from various providers, for example [Yahoo](https://help.yahoo.com/kb/SLN4724.html). Provider used as email delivery vendor for sending and receive email messages througth [SMTP Protocol](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol)
