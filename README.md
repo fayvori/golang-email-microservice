@@ -96,6 +96,9 @@ http://localhost:50001/
 ### Metrics and Swagger
 http://localhost:8242/metrics
 
+### Jaeger UI
+http://localhost:16686/
+
 ### Swagger
 For running swagger execute the following command
 
